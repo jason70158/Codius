@@ -99,7 +99,7 @@ async function upload (options) {
       hostList, options.duration, maxMonthlyRate, generatedManifestObj)
     statusIndicator.start('Updating Codius State File')
     await codiusState.saveCodiusState(options, generatedManifestObj, uploadHostsResponse)
-    statusIndicator.succeed(`Codius State File: ${options.codiusState} Updated`)
+    statusIndicator.succeed(`Codius State File: ${options.codiusStateFile} Updated`)
 
     process.exit(0)
   } catch (err) {

@@ -35,8 +35,7 @@ function codiusVars () {
       },
       private: {
         EXAMPLE_PRIVATE_ENV: {
-          value: 'Private Env Value',
-          nonce: 'jklnfgwekltfhj4io23r89o'
+          value: 'Private Env Value'
         }
       }
     }

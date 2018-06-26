@@ -12,6 +12,6 @@ exports.command = 'extend [options]'
 exports.desc = 'Extends the contract based on the *.codiusstate.json file located in the current directory. Options override original options used for upload which are located in the *.codiusstate.json file. Upload must first be used to generate the *.codiusstate.json file.'
 exports.builder = extendOptions
 exports.handler = async function (argv) {
-  logger.debug(`Extend manifest args: ${JSON.stringify(argv)}`)
+  logger.debug(`Extend args: ${JSON.stringify(argv)}`)
   await extend(argv)
 }

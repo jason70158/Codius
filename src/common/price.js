@@ -47,7 +47,7 @@ async function unitsPerHost ({
     }
     const quotedPrice = new BigNumber(priceResp)
     // Increase the price by 8/100ths of a percent since the server rounds up so we are not  off by a few drops
-    const roundUpUnits = quotedPrice.multipliedBy(roundUpPriceConstant).integerValue()
+    const roundUpUnits = quotedPrice.multipliedBy(roundUpPriceConstant).integerValue(BigNumber.ROUND_CEIL)
     amountOfUnits = quotedPrice.plus(roundUpUnits)
     logger.debug(`Total Amount in units: ${amountOfUnits}`)
   } catch (err) {

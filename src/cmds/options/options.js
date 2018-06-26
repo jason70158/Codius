@@ -20,6 +20,7 @@ const extendDuration = {
     alias: 'd',
     type: 'number',
     description: 'Duration the contract should be extended (seconds)'
+    // NOTE: The default is not specified since it is derived from the codius state file if the parameter is not passed in.
   }
 }
 
@@ -28,6 +29,7 @@ const maxMonthlyRate = {
     alias: 'm',
     type: 'number',
     description: 'Max monthly price per contract per host, requires --units flag to be set. Defaults to 10 XRP.'
+    // NOTE: The default is not set using yargs so that when this param is set yargs requires the units param.
   }
 }
 
@@ -36,6 +38,7 @@ const units = {
     alias: 'u',
     type: 'string',
     description: 'Units to use for the max monthly price, ex \'XRP\'. Defaults to \'XRP\''
+    // NOTE: The default is not set using yargs so that when this param is set yargs requires the max-monthly-rate param.
   }
 }
 
@@ -44,6 +47,7 @@ const hostCount = {
     alias: 'c',
     type: 'number',
     description: 'The number of hosts for the contract to run on, default to 1 if not specified.'
+    // NOTE: The default is not specified so we can check for its exisitance to warn the usere about adding the add-hosts-env options.
   }
 }
 
@@ -58,7 +62,6 @@ const addHostEnv = {
 
 const setHost = {
   host: {
-    alias: 'h',
     type: 'string',
     description: 'Host to use for contract, multiple hosts may be used by repeating this option for each host. Cannot be used with host-count command'
   }
@@ -66,7 +69,6 @@ const setHost = {
 
 const codiusFile = {
   'codius-file': {
-    alias: 'f',
     type: 'string',
     description: 'Filename or full path to codius file to be used. If not set the CLI looks in the current directory for the codius.json file.',
     default: 'codius.json'
@@ -75,7 +77,6 @@ const codiusFile = {
 
 const codiusVarsFile = {
   'codius-vars-file': {
-    alias: 'v',
     type: 'string',
     description: 'Filename or full path to the codius variables file to be used. If not set the CLI looks in the current directory for the codiusvars.json file.',
     default: 'codiusvars.json'
@@ -84,43 +85,40 @@ const codiusVarsFile = {
 
 const codiusHostsFile = {
   'codius-hosts-file': {
-    alias: 'z',
     type: 'string',
     description: 'Filename or full path to the codius hosts file to be used. If not set the CLI looks in the current directory for the codiushosts.json file.'
   }
 }
 
-const codiusStateFilename = {
-  'codius-state': {
-    alias: 's',
+const codiusStateFileUpload = {
+  'codius-state-file': {
     type: 'string',
-    description: 'Filename for generated codius state file, format: <filename>.codiusstate.json.',
+    description: 'Filename or full path to the codius state file to be generated. If not set the CLI will make a default.codiusstate.json file.',
     default: 'default.codiusstate.json'
   }
 }
 
-const codiusStateFile = {
+const codiusStateFileExtend = {
   'codius-state-file': {
-    alias: 'k',
     type: 'string',
     description: 'Filename or full path to the codius state file to be used. If not set the CLI looks in the current directory for the *.codiusstate.json file.'
   }
 }
 
-const overrideCodiusStateFile = {
-  'override-codius-state': {
+const overwriteCodiusStateFile = {
+  'overwrite-codius-state': {
     alias: 'o',
     type: 'boolean',
-    description: 'Overrides the current *.codiusstate file if it exists.'
+    description: 'Overwrite the current *.codiusstate.json file if it exists.'
   }
 }
 
 const noPrompt = {
   'no-prompt': {
-    alias: 'q',
+    alias: 'y',
     type: 'boolean',
     default: false,
-    description: 'Skip prompt to confirm before uploading.'
+    description: 'Say yes to all prompts.'
   }
 }
 
@@ -128,7 +126,7 @@ const extendOptions = {
   ...extendDuration,
   ...maxMonthlyRate,
   ...units,
-  ...codiusStateFile,
+  ...codiusStateFileExtend,
   ...noPrompt
 }
 
@@ -142,12 +140,21 @@ const uploadOptions = {
   ...codiusFile,
   ...codiusVarsFile,
   ...codiusHostsFile,
-  ...codiusStateFilename,
+  ...codiusStateFileUpload,
   ...noPrompt,
-  ...overrideCodiusStateFile
+  ...overwriteCodiusStateFile
+}
+
+const extendManifestOptions = {
+  ...setHost,
+  ...extendDuration,
+  ...maxMonthlyRate,
+  ...units,
+  ...noPrompt
 }
 
 module.exports = {
   uploadOptions,
-  extendOptions
+  extendOptions,
+  extendManifestOptions
 }

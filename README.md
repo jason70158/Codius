@@ -1,10 +1,27 @@
 # Codius CLI
-
 > Command Line Interface for Codius
 
-The command line interface for uploading and extending pods on Codius.
+[![NPM Package](https://img.shields.io/npm/v/codius.svg?style=flat)](https://npmjs.org/package/codius)
+[![CircleCI](https://circleci.com/gh/codius/codius.svg?style=shield)](https://circleci.com/gh/codius/codius)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
+The Command Line Interface for uploading and extending pods on Codius.
+
+## Overview
+The Codius CLI supports uploading & extending pods on codius hosts.
+
+## Upgrade Notes
+If upgrading from Codius CLI 2.0.x please follow the steps below before installing Codius CLI 3.0.0+.
+
+1. `codius pods -l` to list all pods you have uploaded.
+1. For each manifest you wish to keep using export it from the level db using the command:
+`codius post -m [manifestHash]` for example the following will export the pod with the manifes hash `s5e3eqgzy4eqvsejphru6y62uw325nj7tvqr7a2pqxohtkcd6wj` to the file `s5e3eqgz-manifest-backup.json`:
+`codius pods -m s5e3eqgzy4eqvsejphru6y62uw325nj7tvqr7a2pqxohtkcd6wjq > s5e3eqgz-manifest-backup.json`
+1. Repeat the command above for all the manifests you need to preserve so you can keep the contracts running or upload them to a new host.
+1. Follow the section [Manually Creating a Codius State File](#manually-creating-a-codius-state-file) to learn how to manually make a Codius State File from your existing manifests.
 
 ## Prerequisites
+
 * NodeJS
 * An XRP Wallet (you will need at least 20 XRP to open a new one)
 * [Moneyd](https://github.com/interledgerjs/moneyd)
@@ -14,7 +31,6 @@ The Codius CLI can be installed globally by running the following command:
 ```
 npm install -g codius
 ```
-NOTE: add the `--unsafe-perm` flag if installing as root.
 
 It can then be run with the command `codius`.
 
@@ -110,6 +126,9 @@ The Codius CLI uses LevelDB to store data about hosts and containers. The LevelD
 /Users/<username>/.codius-cli
 ```
 If ```XDG_CONFIG_HOME``` is set the database will simply be named `codius-cli` in that directory.
+
+## Manually Creating a Codius State File
+
 
 ## License
 Apache-2.0

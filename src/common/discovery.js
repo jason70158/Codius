@@ -14,7 +14,7 @@ const DISCOVERY_ATTEMPTS = 15
 
 async function fetchHostPeers (host) {
   return new Promise((resolve, reject) => {
-    axios.get(host + '/peers', {
+    axios.get(`${host}/peers`, {
       headers: { Accept: `application/codius-v${config.version.codius.min}+json` }
     }).then(async (res) => {
       if (res) {

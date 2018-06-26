@@ -11,47 +11,7 @@ const moment = require('moment')
 const { getCurrencyDetails } = require('../common/price.js')
 const jsome = require('jsome')
 
-async function fetchUploadManifest (host, duration, maxMonthlyRate, manifestJson) {
-  return new Promise((resolve, reject) => {
-    fetch(`${host}/pods?duration=${duration}`, {
-      headers: {
-        Accept: `application/codius-v${config.version.codius.min}+json`,
-        'Content-Type': 'application/json'
-      },
-      maxPrice: maxMonthlyRate,
-      method: 'POST',
-      body: JSON.stringify(manifestJson)
-    }).then(async (res) => {
-      if (res.status === 200) {
-        await new Promise((resolve) => {
-          setTimeout(resolve, 3000)
-        })
-
-        resolve({
-          status: res.status,
-          host,
-          response: await res.json(),
-          price: res.price
-        })
-      } else {
-        resolve({
-          host,
-          response: await res.json()
-        })
-      }
-    }).catch((error) => {
-      resolve({ host, error })
-    })
-  })
-}
-
-async function uploadManifestToHosts (status, hosts, duration, maxMonthlyRate, manifestJson) {
-  const currency = await getCurrencyDetails()
-  logger.debug(`Upload to Hosts: ${JSON.stringify(hosts)} Duration: ${duration}`)
-  const uploadPromises = hosts.map((host) => {
-    return fetchUploadManifest(host, duration, maxMonthlyRate, manifestJson)
-  })
-  const responses = await Promise.all(uploadPromises)
+function getParsedResponses (responses, currency, status) {
   const parsedResponses = responses.reduce((acc, curr) => {
     const res = curr.response
     if (curr.status === 200) {
@@ -109,6 +69,77 @@ async function uploadManifestToHosts (status, hosts, duration, maxMonthlyRate, m
   return parsedResponses
 }
 
+async function fetchPromise (fetchFunction, host) {
+  return new Promise((resolve, reject) => {
+    fetchFunction.then(async (res) => {
+      if (res.status === 200) {
+        await new Promise((resolve) => {
+          setTimeout(resolve, 3000)
+        })
+
+        resolve({
+          status: res.status,
+          host,
+          response: await res.json(),
+          price: res.price
+        })
+      } else {
+        resolve({
+          host,
+          response: await res.json()
+        })
+      }
+    }).catch((error) => {
+      resolve({ host, error })
+    })
+  })
+}
+
+async function fetchUploadManifest (host, duration, maxMonthlyRate, manifestJson) {
+  const fetchFunction = fetch(`${host}/pods?duration=${duration}`, {
+    headers: {
+      Accept: `application/codius-v${config.version.codius.min}+json`,
+      'Content-Type': 'application/json'
+    },
+    maxPrice: maxMonthlyRate.toString(),
+    method: 'POST',
+    body: JSON.stringify(manifestJson)
+  })
+  return fetchPromise(fetchFunction, host)
+}
+
+async function extendManifestByHashOnHosts (host, duration, maxMonthlyRate, manifestHash) {
+  const fetchFunction = fetch(`${host}/pods?manifestHash=${manifestHash}&duration=${duration}`, {
+    headers: {
+      Accept: `application/codius-v${config.version.codius.min}+json`
+    },
+    maxPrice: maxMonthlyRate.toString(),
+    method: 'PUT'
+  })
+  return fetchPromise(fetchFunction, host)
+}
+
+async function uploadManifestToHosts (status, hosts, duration, maxMonthlyRate, manifestJson) {
+  const currency = await getCurrencyDetails()
+  logger.debug(`Upload to Hosts: ${JSON.stringify(hosts)} Duration: ${duration}`)
+  const uploadPromises = hosts.map((host) => {
+    return fetchUploadManifest(host, duration, maxMonthlyRate, manifestJson)
+  })
+  const responses = await Promise.all(uploadPromises)
+  return getParsedResponses(responses, currency, status)
+}
+
+async function extendManifestByHash (status, hosts, duration, maxMonthlyRate, manifestHash) {
+  const currency = await getCurrencyDetails()
+  logger.debug(`Extending manifest hash ${manifestHash} on Hosts: ${JSON.stringify(hosts)} Duration: ${duration}`)
+  const extendPromises = hosts.map((host) => {
+    return extendManifestByHashOnHosts(host, duration, maxMonthlyRate, manifestHash)
+  })
+  const responses = await Promise.all(extendPromises)
+  return getParsedResponses(responses, currency, status)
+}
+
 module.exports = {
-  uploadManifestToHosts
+  uploadManifestToHosts,
+  extendManifestByHash
 }

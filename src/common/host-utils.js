@@ -11,6 +11,16 @@ const BigNumber = require('bignumber.js')
 const sampleSize = require('lodash.samplesize')
 const { getCurrencyDetails } = require('../common/price.js')
 
+function cleanHostListUrls (hostList) {
+  return hostList.map(host => {
+    // TODO: Add https start of url checking
+    if (host.endsWith('/')) {
+      return host.slice(0, -1)
+    }
+    return host
+  })
+}
+
 async function fetchHostPrice (host, duration, manifestJson) {
   return new Promise((resolve, reject) => {
     fetch(`${host}/pods?duration=${duration}`, {
@@ -125,10 +135,11 @@ async function getValidHosts ({ duration, hostCount = 1, host }, maxPriceLocalUn
     uploadHosts = await gatherMatchingValidHosts(hostList, duration, maxPriceLocalUnits, hostCount, manifestJson)
   }
 
-  return uploadHosts
+  return cleanHostListUrls(uploadHosts)
 }
 
 module.exports = {
+  cleanHostListUrls,
   getValidHosts,
   checkPricesOnHosts
 }

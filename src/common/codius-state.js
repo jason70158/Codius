@@ -13,12 +13,19 @@ const jsome = require('jsome')
 const examples = require('../common/examples.js')
 const inquirer = require('inquirer')
 
-async function validateOptions (status, { hosts, codiusFile, codiusVarsFile, codiusHostsFile, codiusState, overrideCodiusState, noPrompt }) {
+async function validateOptions (
+  status,
+  {
+    hosts, codiusFile, codiusVarsFile,
+    codiusHostsFile, codiusStateFile,
+    overrideCodiusState, noPrompt
+  }
+) {
   const currDir = process.cwd()
-  const codiusStateExists = await fse.pathExists(codiusState)
+  const codiusStateExists = await fse.pathExists(codiusStateFile)
   logger.debug(`override codius state: ${overrideCodiusState}`)
   if (codiusStateExists && !overrideCodiusState) {
-    const errorMessage = `Codius State File\n ${currDir}/${codiusState}\nalready exists. Please remove "${codiusState} from the current working directory or pass option --override-codius-state`
+    const errorMessage = `Codius State File\n ${currDir}/${codiusStateFile}\nalready exists. Please remove "${codiusStateFile} from the current working directory or pass option --override-codius-state`
     throw new Error(errorMessage)
   }
 
@@ -72,7 +79,7 @@ async function validateOptions (status, { hosts, codiusFile, codiusVarsFile, cod
     if (codiusHostsFile === 'codiushosts.json') {
       errorMessage = `Codius Hosts File\n ${currDir}/${codiusHostsFile}\n does not exists please check the location of your ${codiusHostsFile}.`
     } else {
-      errorMessage = `Codius Hosts File\n ${codiusFile}\ndoes not exist, please check the location of your ${codiusHostsFile}.`
+      errorMessage = `Codius Hosts File\n ${codiusHostsFile}\ndoes not exist, please check the location of your ${codiusHostsFile}.`
     }
     throw new Error(errorMessage)
   }
@@ -87,7 +94,7 @@ function getHostList (codiusStateJson, uploadResponses) {
   return fullHostList
 }
 
-async function saveCodiusState ({ codiusState, maxMonthlyRate = config.price.month.xrp, units = config.price.units, duration }, manifestJson, uploadResponses, codiusStateJson) {
+async function saveCodiusState ({ codiusStateFile, maxMonthlyRate = config.price.month.xrp, units = config.price.units, duration }, manifestJson, uploadResponses, codiusStateJson) {
   let hostDetailsObj = (codiusStateJson && codiusStateJson.status &&
     codiusStateJson.status.hostDetails) ? codiusStateJson.status.hostDetails : {}
 
@@ -123,7 +130,7 @@ async function saveCodiusState ({ codiusState, maxMonthlyRate = config.price.mon
     }
   }
   logger.debug(`Codius State File Obj: ${jsome(codiusStateObj)}`)
-  await fse.writeJson(codiusState, codiusStateObj, { spaces: 2 })
+  await fse.writeJson(codiusStateFile, codiusStateObj, { spaces: 2 })
 }
 
 module.exports = {
