@@ -45,7 +45,7 @@ function getHostList ({ host, manifestHash }) {
     const potentialHost = manifestHash.split('.')
     potentialHost.shift()
     if (potentialHost.length < 0) {
-      throw new Error(`The end of ${manifestHash} is not a valid url. Please use the format <manifesthHash.hostName> to specify the specific contract to extend or the --host parameter.`)
+      throw new Error(`The end of ${manifestHash} is not a valid url. Please use the format <manifesthHash.hostName> to specify the specific pod to extend or the --host parameter.`)
     }
     hostsArr = [`https://${potentialHost.join('.')}`]
   } else {

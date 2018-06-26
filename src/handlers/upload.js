@@ -1,5 +1,5 @@
 /**
- * @fileOverview Handler to upload codius contract to network
+ * @fileOverview Handler to upload codius pod to network
  * @name upload.js<handlers>
  * @author Travis Crist
  */

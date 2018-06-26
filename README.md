@@ -17,7 +17,7 @@ If upgrading from Codius CLI 2.0.x please follow the steps below before installi
 1. For each manifest you wish to keep using export it from the level db using the command:
 `codius post -m [manifestHash]` for example the following will export the pod with the manifes hash `s5e3eqgzy4eqvsejphru6y62uw325nj7tvqr7a2pqxohtkcd6wj` to the file `s5e3eqgz-manifest-backup.json`:
 `codius pods -m s5e3eqgzy4eqvsejphru6y62uw325nj7tvqr7a2pqxohtkcd6wjq > s5e3eqgz-manifest-backup.json`
-1. Repeat the command above for all the manifests you need to preserve so you can keep the contracts running or upload them to a new host.
+1. Repeat the command above for all the manifests you need to preserve so you can keep the pod running or upload them to a new host.
 1. Follow the section [Manually Creating a Codius State File](#manually-creating-a-codius-state-file) to learn how to manually make a Codius State File from your existing manifests.
 
 ## Prerequisites
@@ -81,7 +81,7 @@ Arguments:
 
 | Options                   | Argument Type | Description                                                                                                                                              |
 |---------------------------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| --duration, -d            | Integer       | Duration (in seconds) by which the contract will be run on all Codius hosts, defaults to 10 mins.                                                        |
+| --duration, -d            | Integer       | Duration (in seconds) by which the pod will be run on all Codius hosts, defaults to 10 mins.                                                     |
 | --max-monthly-rate, --max | Integer       | The max rate per month the uploader is willing to pay a Codius host to run the manifest.                                                                 |
 | --units, -u               | Integer       | The unit of currency to pay the Codius hosts with. e.g. XRP                                                                                              |
 | --host-count, -c          | Integer       | The number of hosts to upload the manifest to. They are discovered from known hosts and selected randomly. This and `--host, -h` are mutually exclusive. |
@@ -90,7 +90,7 @@ Arguments:
 | --no-prompt, --np         | None          | Run without making any prompts to the user.                                                                                                              |
 
 ### `extend <manifest>`
-Extends the duration of existing contracts.
+Extends the duration of existing pod.
 
 Arguments:
 * `<manifest>`
@@ -99,7 +99,7 @@ Arguments:
 
 | Options                   | Argument Type | Description                                                                                            |
 |---------------------------|---------------|--------------------------------------------------------------------------------------------------------|
-| --duration, -d            | Integer       | Duration (in seconds) by which the contract will be extended on all Codius hosts currently running it. |
+| --duration, -d            | Integer       | Duration (in seconds) by which the pod will be extended on all Codius hosts currently running it. |
 | --max-monthly-rate, --max | Integer       | The max rate per month the uploader is willing to pay a Codius host to run the manifest.               |
 | --units, -u               | Integer       | The unit of currency to pay the Codius hosts with. E.g. XRP                                            |
 | --no-prompt, --np         | None          | Run without making any prompts to the user.                                                            |

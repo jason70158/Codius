@@ -11,7 +11,7 @@ const duration = {
     alias: 'd',
     type: 'number',
     default: config.duration,
-    description: 'Duration the contract should run (seconds) defaults to 10 mins'
+    description: 'Duration the pod should run (seconds) defaults to 10 mins'
   }
 }
 
@@ -19,7 +19,7 @@ const extendDuration = {
   duration: {
     alias: 'd',
     type: 'number',
-    description: 'Duration the contract should be extended (seconds)'
+    description: 'Duration the pod should be extended (seconds)'
     // NOTE: The default is not specified since it is derived from the codius state file if the parameter is not passed in.
   }
 }
@@ -28,7 +28,7 @@ const maxMonthlyRate = {
   'max-monthly-rate': {
     alias: 'm',
     type: 'number',
-    description: 'Max monthly price per contract per host, requires --units flag to be set. Defaults to 10 XRP.'
+    description: 'Max monthly price per pod per host, requires --units flag to be set. Defaults to 10 XRP.'
     // NOTE: The default is not set using yargs so that when this param is set yargs requires the units param.
   }
 }
@@ -46,7 +46,7 @@ const hostCount = {
   'host-count': {
     alias: 'c',
     type: 'number',
-    description: 'The number of hosts for the contract to run on, default to 1 if not specified.'
+    description: 'The number of hosts for the pod to run on, default to 1 if not specified.'
     // NOTE: The default is not specified so we can check for its exisitance to warn the usere about adding the add-hosts-env options.
   }
 }
@@ -56,14 +56,14 @@ const addHostEnv = {
     alias: 'a',
     type: 'boolean',
     default: false,
-    description: 'Adds a $HOST env for each container in the manifest that contains other hosts running the same contract'
+    description: 'Adds a $HOST env for each container in the manifest that contains other hosts running the same pod'
   }
 }
 
 const setHost = {
   host: {
     type: 'string',
-    description: 'Host to use for contract, multiple hosts may be used by repeating this option for each host. Cannot be used with host-count command'
+    description: 'Host to use for pod, multiple hosts may be used by repeating this option for each host. Cannot be used with host-count command'
   }
 }
 
