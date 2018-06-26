@@ -130,13 +130,13 @@ async function extend (options) {
 
     statusIndicator.start('Updating Codius State File')
     const saveStateOptions = {
-      codiusState: codiusStateFilePath,
+      codiusStateFile: codiusStateFilePath,
       maxMonthlyRate: stateOptions.maxMonthlyRate,
       units: stateOptions.units,
       duration: stateOptions.duration
     }
     await codiusState.saveCodiusState(saveStateOptions, manifestJson, uploadHostsResponse, codiusStateJson)
-    statusIndicator.succeed(`Codius State File: ${codiusStateFilePath} Updated`)
+    statusIndicator.succeed(`Codius State File: ${codiusStateFilePath} updated`)
 
     process.exit(0)
   } catch (err) {

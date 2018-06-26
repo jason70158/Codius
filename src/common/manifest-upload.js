@@ -14,8 +14,8 @@ const { checkStatus } = require('../common/utils.js')
 
 function getParsedResponses (responses, currency, status) {
   const parsedResponses = responses.reduce((acc, curr) => {
-    const res = curr
-    if (checkStatus(res)) {
+    const res = curr.response
+    if (checkStatus(curr)) {
       const successObj = {
         url: res.url,
         manifestHash: res.manifestHash,
@@ -31,7 +31,7 @@ function getParsedResponses (responses, currency, status) {
       const failedObj = {
         host: curr.host,
         response: res.text || '',
-        statusCode: res.statusCode || '',
+        statusCode: res.status || '',
         statusText: res.message || ''
       }
       acc.failed = [...acc.failed, failedObj]

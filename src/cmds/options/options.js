@@ -101,7 +101,8 @@ const codiusStateFileUpload = {
 const codiusStateFileExtend = {
   'codius-state-file': {
     type: 'string',
-    description: 'Filename or full path to the codius state file to be used. If not set the CLI looks in the current directory for the *.codiusstate.json file.'
+    description: 'Filename or full path to the codius state file to be used. If not set the CLI looks in the current directory for the *.codiusstate.json file.',
+    default: 'default.codiusstate.json'
   }
 }
 
