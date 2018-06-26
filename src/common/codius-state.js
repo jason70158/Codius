@@ -14,12 +14,13 @@ const inquirer = require('inquirer')
 
 async function validateOptions (
   status,
-  {
-    hosts, codiusFile, codiusVarsFile,
-    codiusHostsFile, codiusStateFile,
-    overwriteCodiusState, noPrompt
-  }
-) {
+  { hosts,
+    codiusFile,
+    codiusVarsFile,
+    codiusHostsFile,
+    codiusStateFile,
+    overwriteCodiusState,
+    noPrompt }) {
   const currDir = process.cwd()
   const codiusStateExists = await fse.pathExists(codiusStateFile)
   logger.debug(`overwrite codius state: ${overwriteCodiusState}`)
@@ -107,7 +108,14 @@ function getHostList (codiusStateJson, uploadResponses) {
   return fullHostList
 }
 
-async function saveCodiusState ({ codiusStateFile, maxMonthlyRate = config.price.month.xrp, units = config.price.units, duration }, manifestJson, uploadResponses, codiusStateJson) {
+async function saveCodiusState (
+  { codiusStateFile,
+    maxMonthlyRate = config.price.month.xrp,
+    units = config.price.units,
+    duration },
+  manifestJson,
+  uploadResponses,
+  codiusStateJson) {
   let hostDetailsObj = (codiusStateJson && codiusStateJson.status &&
     codiusStateJson.status.hostDetails) ? codiusStateJson.status.hostDetails : {}
 
