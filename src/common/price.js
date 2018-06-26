@@ -36,12 +36,14 @@ async function unitsPerHost ({
   const price = new Price()
   let amountOfUnits
   try {
+    let timer
     const timeoutPromise = new Promise((resolve, reject) => {
-      setTimeout(resolve, 2000)
+      timer = setTimeout(resolve, 2000)
     })
     const priceFetchPromise = price.fetch(units, totalFee)
 
     const priceResp = await Promise.race([timeoutPromise, priceFetchPromise])
+    clearTimeout(timer)
     if (!priceResp) {
       throw new Error('unable to make to make ILP Connection, run Codius CLI in debug via command:\n\'DEBUG=* codius <commands>\'\nto verify you are connected.')
     }
