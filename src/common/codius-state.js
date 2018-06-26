@@ -9,7 +9,6 @@ const fse = require('fs-extra')
 const BigNumber = require('bignumber.js')
 const { hashManifest } = require('codius-manifest')
 const config = require('../config.js')
-const jsome = require('jsome')
 const examples = require('../common/examples.js')
 const inquirer = require('inquirer')
 
@@ -18,14 +17,14 @@ async function validateOptions (
   {
     hosts, codiusFile, codiusVarsFile,
     codiusHostsFile, codiusStateFile,
-    overrideCodiusState, noPrompt
+    overwriteCodiusState, noPrompt
   }
 ) {
   const currDir = process.cwd()
   const codiusStateExists = await fse.pathExists(codiusStateFile)
-  logger.debug(`override codius state: ${overrideCodiusState}`)
-  if (codiusStateExists && !overrideCodiusState) {
-    const errorMessage = `Codius State File\n ${currDir}/${codiusStateFile}\nalready exists. Please remove "${codiusStateFile} from the current working directory or pass option --override-codius-state`
+  logger.debug(`overwrite codius state: ${overwriteCodiusState}`)
+  if (codiusStateExists && !overwriteCodiusState) {
+    const errorMessage = `Codius State File\n ${currDir}/${codiusStateFile}\nalready exists. Please remove "${codiusStateFile} from the current working directory or pass option --overwrite-codius-state`
     throw new Error(errorMessage)
   }
 
@@ -44,9 +43,23 @@ async function validateOptions (
         default: false
       }
     ])
-    console.log(userResp)
     if (userResp.createExample) {
       await examples.createExample('nginx')
+      codiusExists = await fse.pathExists(codiusFile)
+      codiusVarsExists = await fse.pathExists(codiusVarsFile)
+    }
+  } else if (codiusVarsFile === 'codiusvars.json' && !codiusVarsExists && !noPrompt) {
+    console.info(`No codiusvars.json files present in ${currDir}`)
+    const userResp = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'createExample',
+        message: `Would you like example codiusvars.json to be generated in ${currDir}?`,
+        default: false
+      }
+    ])
+    if (userResp.createExample) {
+      await examples.createExample('codiusvars')
       codiusExists = await fse.pathExists(codiusFile)
       codiusVarsExists = await fse.pathExists(codiusVarsFile)
     }
@@ -90,7 +103,7 @@ function getHostList (codiusStateJson, uploadResponses) {
   const successfulHostList = [...new Set(uploadResponses.success.reduce((acc, curr) => [...acc, curr.host], []))]
   const existingHostList = codiusStateJson ? codiusStateJson.hostList : []
   const fullHostList = [...new Set([...successfulHostList, ...existingHostList])]
-  console.log(fullHostList)
+  logger.debug(fullHostList)
   return fullHostList
 }
 
@@ -129,7 +142,7 @@ async function saveCodiusState ({ codiusStateFile, maxMonthlyRate = config.price
       hostDetails: hostDetailsObj
     }
   }
-  logger.debug(`Codius State File Obj: ${jsome(codiusStateObj)}`)
+  logger.debug(`Codius State File Obj:\n${JSON.stringify(codiusStateObj, null, 2)}`)
   await fse.writeJson(codiusStateFile, codiusStateObj, { spaces: 2 })
 }
 

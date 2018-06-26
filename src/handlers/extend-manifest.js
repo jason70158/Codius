@@ -14,6 +14,7 @@ const config = require('../config.js')
 const inquirer = require('inquirer')
 const jsome = require('jsome')
 const logger = require('riverpig')('codius-cli:extend-manifest')
+const { checkStatus } = require('../common/utils.js')
 
 async function getExistingManifest (hostList, manifestHash) {
   let responses = []
@@ -23,7 +24,11 @@ async function getExistingManifest (hostList, manifestHash) {
       const resp = await axios.get(`${host}/pods?manifestHash=${manifestHash}`, {
         headers: { Accept: `application/codius-v${config.version.codius.min}+json` }
       })
-      responses.push(resp.data)
+      if (checkStatus(resp)) {
+        responses.push(resp.data)
+      } else {
+        throw new Error(`GET: ${host}/pods?manifestHash=${manifestHash} Failed. Status: ${resp.status}`)
+      }
     }
   } catch (err) {
     throw new Error(`GET: ${err.config.url} ${err.message}`)
@@ -40,7 +45,7 @@ function getHostList ({ host, manifestHash }) {
     const potentialHost = manifestHash.split('.')
     potentialHost.shift()
     if (potentialHost.length < 0) {
-      throw new Error(`The end of ${manifestHash} is not a valid url. Please use the format <manifesthHash.hostName> to specify the specific contract to extend.`)
+      throw new Error(`The end of ${manifestHash} is not a valid url. Please use the format <manifesthHash.hostName> to specify the specific contract to extend or the --host parameter.`)
     }
     hostsArr = [`https://${potentialHost.join('.')}`]
   } else {

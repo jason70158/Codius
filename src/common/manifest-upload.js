@@ -10,11 +10,12 @@ const config = require('../config.js')
 const moment = require('moment')
 const { getCurrencyDetails } = require('../common/price.js')
 const jsome = require('jsome')
+const { checkStatus } = require('../common/utils.js')
 
 function getParsedResponses (responses, currency, status) {
   const parsedResponses = responses.reduce((acc, curr) => {
-    const res = curr.response
-    if (curr.status === 200) {
+    const res = curr
+    if (checkStatus(res)) {
       const successObj = {
         url: res.url,
         manifestHash: res.manifestHash,
@@ -29,7 +30,7 @@ function getParsedResponses (responses, currency, status) {
     } else {
       const failedObj = {
         host: curr.host,
-        response: res,
+        response: res.text || '',
         statusCode: res.statusCode || '',
         statusText: res.message || ''
       }
@@ -72,11 +73,7 @@ function getParsedResponses (responses, currency, status) {
 async function fetchPromise (fetchFunction, host) {
   return new Promise((resolve, reject) => {
     fetchFunction.then(async (res) => {
-      if (res.status === 200) {
-        await new Promise((resolve) => {
-          setTimeout(resolve, 3000)
-        })
-
+      if (checkStatus(res)) {
         resolve({
           status: res.status,
           host,
@@ -86,11 +83,13 @@ async function fetchPromise (fetchFunction, host) {
       } else {
         resolve({
           host,
-          response: await res.json()
+          error: res.error ? res.error.toString() : 'Unknown Error Occurred',
+          text: await res.text() || '',
+          status: res.status || ''
         })
       }
     }).catch((error) => {
-      resolve({ host, error })
+      resolve({ host, error: error.toString() || '' })
     })
   })
 }

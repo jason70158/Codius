@@ -20,7 +20,7 @@ const logger = require('riverpig')('codius-cli:uploadHandler')
 async function getCodiusStateFilePath () {
   const files = await new Promise((resolve, reject) => {
     nodeDir.readFiles(process.cwd(), {
-      match: /.codiusstate.json$/, recursive: false
+      match: /\.codiusstate\.json$/, recursive: false
     }, (err, content, next) => {
       if (err) throw err
       next()

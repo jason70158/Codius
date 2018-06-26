@@ -8,6 +8,7 @@ const axios = require('axios')
 const logger = require('riverpig')('codius-cli:discovery')
 const sampleSize = require('lodash.samplesize')
 const config = require('../config.js')
+const { checkStatus } = require('../common/utils.js')
 
 const HOSTS_PER_DISCOVERY = 4
 const DISCOVERY_ATTEMPTS = 15
@@ -17,13 +18,18 @@ async function fetchHostPeers (host) {
     axios.get(`${host}/peers`, {
       headers: { Accept: `application/codius-v${config.version.codius.min}+json` }
     }).then(async (res) => {
-      if (res) {
+      if (checkStatus(res)) {
         resolve({ host, peers: res.data.peers })
       } else {
-        resolve(null)
+        resolve({
+          host,
+          error: res.error.toString() || 'Unknown Error Occurred',
+          text: await res.text() || '',
+          status: res.status || ''
+        })
       }
     }).catch((error) => {
-      resolve({ host, error })
+      resolve({ host, error: error.toString() })
     })
   })
 }

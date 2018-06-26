@@ -5,7 +5,7 @@
  */
 
 const { getCurrencyDetails, unitsPerHost } = require('../common/price.js')
-const { getValidHosts } = require('../common/host-utils.js')
+const { getValidHosts, cleanHostListUrls } = require('../common/host-utils.js')
 const { discoverHosts } = require('../common/discovery.js')
 const { uploadManifestToHosts } = require('../common/manifest-upload.js')
 const ora = require('ora')
@@ -22,7 +22,6 @@ function checkOptions ({ hostCount, addHostEnv }) {
   // If the host number is set but the add host env is not specified warn the user
   if (hostCount && !addHostEnv) {
     statusIndicator.warn('Hosts will NOT be aded to the HOSTS env in the generated manifest.')
-    // TODO: Prompt user here using inquirer?
   }
 }
 
@@ -46,7 +45,6 @@ async function upload (options) {
 
   try {
     await codiusState.validateOptions(statusIndicator, options)
-    statusIndicator.succeed()
     statusIndicator.start('Generating Codius Manifest')
     const generatedManifestObj = await generateManifest(options.codiusVarsFile, options.codiusFile)
 
@@ -66,13 +64,15 @@ async function upload (options) {
     } else {
       hostList = options.host
     }
+    const cleanHostList = cleanHostListUrls(hostList)
     statusIndicator.start('Calculating Max Monthly Rate')
     const maxMonthlyRate = await unitsPerHost(options)
     const currencyDetails = await getCurrencyDetails()
+
     statusIndicator.start(`Checking Host Monthly Rate vs Max Monthly Rate ${maxMonthlyRate.toString()} ${currencyDetails}`)
-    hostList = await getValidHosts(options, maxMonthlyRate, hostList, generatedManifestObj)
+    const validHostList = await getValidHosts(options, maxMonthlyRate, cleanHostList, generatedManifestObj)
     statusIndicator.succeed()
-    addHostsToManifest(statusIndicator, options, generatedManifestObj, hostList)
+    addHostsToManifest(statusIndicator, options, generatedManifestObj, validHostList)
 
     if (!options.noPrompt) {
       console.info(config.lineBreak)
