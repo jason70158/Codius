@@ -114,8 +114,8 @@ const overwriteCodiusStateFile = {
   }
 }
 
-const noPrompt = {
-  'no-prompt': {
+const assumeYes = {
+  'assume-yes': {
     alias: 'y',
     type: 'boolean',
     default: false,
@@ -128,7 +128,7 @@ const extendOptions = {
   ...maxMonthlyRate,
   ...units,
   ...codiusStateFileExtend,
-  ...noPrompt
+  ...assumeYes
 }
 
 const uploadOptions = {
@@ -142,7 +142,7 @@ const uploadOptions = {
   ...codiusVarsFile,
   ...codiusHostsFile,
   ...codiusStateFileUpload,
-  ...noPrompt,
+  ...assumeYes,
   ...overwriteCodiusStateFile
 }
 
@@ -151,7 +151,7 @@ const extendManifestOptions = {
   ...extendDuration,
   ...maxMonthlyRate,
   ...units,
-  ...noPrompt
+  ...assumeYes
 }
 
 module.exports = {

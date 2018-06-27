@@ -94,7 +94,7 @@ async function extend (options) {
     const statusDetails = getHostsStatus(codiusStateJson)
     const stateOptions = getOptions(options, codiusStateJson.options)
 
-    if (!options.noPrompt) {
+    if (!options.assumeYes) {
       console.info('Extending Manifest:')
       jsome(manifestJson)
       console.info('on the folowing hosts:')

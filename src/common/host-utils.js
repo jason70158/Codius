@@ -13,14 +13,21 @@ const { getCurrencyDetails } = require('../common/price.js')
 const { URL } = require('url')
 const { checkStatus } = require('../common/utils.js')
 
-function cleanHostListUrls (hostList) {
+function cleanHostListUrls (hosts) {
+  let hostList
+  // Singular host options are a string so we have to make them into an array
+  if (typeof hosts === 'string') {
+    hostList = [hosts]
+  } else {
+    hostList = hosts
+  }
+
   return hostList.map(host => {
     if (!host.startsWith('http://') && !host.startsWith('https://')) {
       host = `https://${host}`
     }
     try {
       const url = new URL(host)
-      logger.debug(`host url ${url.origin}`)
       return url.origin
     } catch (err) {
       throw new Error(err)
@@ -85,7 +92,7 @@ async function checkHostsPrices (fetchHostPromises, maxMonthlyRate) {
   return results
 }
 
-async function gatherMatchingValidHosts ({ duration, hostCount }, hostList, maxMonthlyRate, manifestJson) {
+async function gatherMatchingValidHosts ({ duration, hostCount = 1 }, hostList, maxMonthlyRate, manifestJson) {
   let validHosts = []
   const maxAttempts = hostList.length
   let attemptCount = 0
@@ -93,7 +100,7 @@ async function gatherMatchingValidHosts ({ duration, hostCount }, hostList, maxM
   let invalidHosts = []
 
   while (validHosts.length < hostCount && attemptCount < maxAttempts) {
-    logger.debug(`Valid Hosts Found: ${validHosts.length}, attemptCount: ${attemptCount}`)
+    logger.debug(`Valid Hosts Found: ${validHosts.length}, attemptCount: ${attemptCount} need: ${hostCount} host(s)`)
     const candidateHosts = sampleSize(hostList, hostCount < 5 ? hostCount : 5).filter((host) => !invalidHosts.includes(host))
     logger.debug(`Candidate Hosts: ${candidateHosts}`)
     logger.debug(`InvalidHosts: ${invalidHosts}`)
@@ -136,13 +143,8 @@ async function checkPricesOnHosts (hosts, duration, maxMonthlyRate, manifestJson
 async function getValidHosts (options, maxMonthlyRate, hostList, manifestJson) {
   let uploadHosts = []
   if (options.host) {
-    // Singular host options are a string so we have to make them into an array
-    if (typeof options.host === 'string') {
-      uploadHosts = [options.host]
-    } else {
-      uploadHosts = options.host
-    }
-    await checkPricesOnHosts(uploadHosts, options.duration, maxMonthlyRate, manifestJson)
+    await checkPricesOnHosts(hostList, options.duration, maxMonthlyRate, manifestJson)
+    uploadHosts = hostList
   } else {
     uploadHosts = await gatherMatchingValidHosts(options, hostList, maxMonthlyRate, manifestJson)
   }

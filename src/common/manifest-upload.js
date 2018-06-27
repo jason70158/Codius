@@ -14,7 +14,7 @@ const { checkStatus } = require('../common/utils.js')
 
 function getParsedResponses (responses, currency, status) {
   const parsedResponses = responses.reduce((acc, curr) => {
-    const res = curr.response
+    const res = curr.response || curr
     if (checkStatus(curr)) {
       const successObj = {
         url: res.url,
@@ -30,16 +30,16 @@ function getParsedResponses (responses, currency, status) {
     } else {
       const failedObj = {
         host: curr.host,
-        response: res.text || '',
-        statusCode: res.status || '',
-        statusText: res.message || ''
+        error: curr.error,
+        response: curr.text || '',
+        statusCode: curr.status || '',
+        statusText: curr.message || ''
       }
       acc.failed = [...acc.failed, failedObj]
     }
     return acc
   }, { success: [], failed: [] })
 
-  status.succeed('Upload Completed')
   if (parsedResponses.success.length > 0) {
     parsedResponses.success.map((obj) => {
       status.succeed(`Upload to ${obj.host} Successful`)

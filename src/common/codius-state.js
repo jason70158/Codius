@@ -20,7 +20,7 @@ async function validateOptions (
     codiusHostsFile,
     codiusStateFile,
     overwriteCodiusState,
-    noPrompt }) {
+    assumeYes }) {
   const currDir = process.cwd()
   const codiusStateExists = await fse.pathExists(codiusStateFile)
   logger.debug(`overwrite codius state: ${overwriteCodiusState}`)
@@ -32,37 +32,50 @@ async function validateOptions (
   let codiusExists = await fse.pathExists(codiusFile)
   let codiusVarsExists = await fse.pathExists(codiusVarsFile)
   const codiusHostsExists = await fse.pathExists(codiusHostsFile)
-
   if (codiusFile === 'codius.json' && codiusVarsFile === 'codiusvars.json' &&
-      !codiusExists && !codiusVarsExists && !noPrompt) {
-    console.info(`No codius.json or codiusvars.json files present in ${currDir}`)
-    const userResp = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'createExample',
-        message: `Would you like example codius.json and codiusvars.json to be generated in ${currDir}?`,
-        default: false
-      }
-    ])
+      !codiusExists && !codiusVarsExists) {
+    let userResp = {}
+    if (assumeYes) {
+      logger.debug(`No codius.json and codiusvars.json file present in ${currDir}, creating examples since --assume-yes flag is present`)
+      userResp.createExample = true
+    } else {
+      console.info(`No codius.json and codiusvars.json files present in ${currDir}`)
+      userResp = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'createExample',
+          message: `Would you like example codius.json and codiusvars.json to be generated in ${currDir}?`,
+          default: false
+        }
+      ])
+    }
     if (userResp.createExample) {
       await examples.createExample('nginx')
       codiusExists = await fse.pathExists(codiusFile)
       codiusVarsExists = await fse.pathExists(codiusVarsFile)
+      status.succeed(`Created codius.json and codiusvars.json file in ${currDir}`)
     }
-  } else if (codiusVarsFile === 'codiusvars.json' && !codiusVarsExists && !noPrompt) {
-    console.info(`No codiusvars.json files present in ${currDir}`)
-    const userResp = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'createExample',
-        message: `Would you like example codiusvars.json to be generated in ${currDir}?`,
-        default: false
-      }
-    ])
+  } else if (codiusVarsFile === 'codiusvars.json' && !codiusVarsExists) {
+    let userResp = {}
+    if (assumeYes) {
+      logger.debug(`No codiusvars.json file present in ${currDir}, creating example since --assume-yes flag is present`)
+      userResp.createExample = true
+    } else {
+      console.info(`No codiusvars.json file present in ${currDir}`)
+      userResp = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'createExample',
+          message: `Would you like example codiusvars.json to be generated in ${currDir}?`,
+          default: false
+        }
+      ])
+    }
     if (userResp.createExample) {
       await examples.createExample('codiusvars')
       codiusExists = await fse.pathExists(codiusFile)
       codiusVarsExists = await fse.pathExists(codiusVarsFile)
+      status.succeed(`Created codiusvars.json file in ${currDir}`)
     }
   }
 
@@ -101,7 +114,7 @@ async function validateOptions (
 }
 
 function getHostList (codiusStateJson, uploadResponses) {
-  const successfulHostList = [...new Set(uploadResponses.success.reduce((acc, curr) => [...acc, curr.host], []))]
+  const successfulHostList = [...new Set(uploadResponses.success.map(obj => obj.host))]
   const existingHostList = codiusStateJson ? codiusStateJson.hostList : []
   const fullHostList = [...new Set([...successfulHostList, ...existingHostList])]
   logger.debug(fullHostList)

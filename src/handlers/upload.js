@@ -18,10 +18,10 @@ const config = require('../config.js')
 const jsome = require('jsome')
 const logger = require('riverpig')('codius-cli:uploadhandler')
 
-function checkOptions ({ hostCount, addHostEnv }) {
+function checkOptions ({ addHostEnv }) {
   // If the host number is set but the add host env is not specified warn the user
-  if (hostCount && !addHostEnv) {
-    statusIndicator.warn('Hosts will NOT be aded to the HOSTS env in the generated manifest.')
+  if (!addHostEnv) {
+    statusIndicator.warn('Hosts will NOT be added to the HOSTS env in the generated manifest.')
   }
 }
 
@@ -57,7 +57,7 @@ async function upload (options) {
         hostList = (await fse.readJson(options.codiusHostsFile)).hosts
       } else {
         statusIndicator.start('Discovering Hosts')
-        const discoverCount = options.hostCount > 50 ? options.HostCount : 50
+        const discoverCount = options.hostCount > 50 ? options.hostCount : 50
         hostList = await discoverHosts(discoverCount)
         statusIndicator.succeed(`Discovered ${hostList.length} Hosts`)
       }
@@ -74,12 +74,12 @@ async function upload (options) {
     statusIndicator.succeed()
     addHostsToManifest(statusIndicator, options, generatedManifestObj, validHostList)
 
-    if (!options.noPrompt) {
+    if (!options.assumeYes) {
       console.info(config.lineBreak)
       console.info('Generated Manifest:')
       jsome(generatedManifestObj)
       console.info('will be uploaded to hosts:')
-      jsome(hostList)
+      jsome(validHostList)
       const userResp = await inquirer.prompt([
         {
           type: 'confirm',
@@ -93,13 +93,16 @@ async function upload (options) {
         throw new Error('Upload aborted by user')
       }
     }
-    statusIndicator.start(`Uploading to ${hostList.length} host(s)`)
+    statusIndicator.start(`Uploading to ${validHostList.length} host(s)`)
 
     const uploadHostsResponse = await uploadManifestToHosts(statusIndicator,
-      hostList, options.duration, maxMonthlyRate, generatedManifestObj)
-    statusIndicator.start('Updating Codius State File')
-    await codiusState.saveCodiusState(options, generatedManifestObj, uploadHostsResponse)
-    statusIndicator.succeed(`Codius State File: ${options.codiusStateFile} Updated`)
+      validHostList, options.duration, maxMonthlyRate, generatedManifestObj)
+
+    if (uploadHostsResponse.success.length > 0) {
+      statusIndicator.start('Updating Codius State File')
+      await codiusState.saveCodiusState(options, generatedManifestObj, uploadHostsResponse)
+      statusIndicator.succeed(`Codius State File: ${options.codiusStateFile} Updated`)
+    }
 
     process.exit(0)
   } catch (err) {

@@ -41,20 +41,12 @@ async function getExistingManifest (hostList, manifestHash) {
 
 function getHostList ({ host, manifestHash }) {
   let hostsArr = []
-  if (!host) {
-    const potentialHost = manifestHash.split('.')
-    potentialHost.shift()
-    if (potentialHost.length < 0) {
-      throw new Error(`The end of ${manifestHash} is not a valid url. Please use the format <manifesthHash.hostName> to specify the specific pod to extend or the --host parameter.`)
-    }
-    hostsArr = [`https://${potentialHost.join('.')}`]
-  } else {
-    if (typeof host === 'string') {
-      hostsArr = [host]
-    } else {
-      hostsArr = host
-    }
+  const potentialHost = manifestHash.split('.')
+  potentialHost.shift()
+  if (potentialHost.length < 0) {
+    throw new Error(`The end of ${manifestHash} is not a valid url. Please use the format <manifesthHash.hostName> to specify the specific pod to extend or the --host parameter.`)
   }
+  hostsArr = [`https://${potentialHost.join('.')}`]
   return cleanHostListUrls(hostsArr)
 }
 
@@ -94,7 +86,7 @@ async function extendManifest (options) {
     }
     statusIndicator.succeed()
 
-    if (!options.noPrompt) {
+    if (!options.assumeYes) {
       console.info('Extending Manifest:')
       jsome(manifestJson)
       console.info('on the following hosts:')
