@@ -55,7 +55,7 @@ function getHostsStatus (codiusStateJson) {
   const hostList = codiusStateJson.hostList
   const hostDetails = codiusStateJson.status ? codiusStateJson.status.hostDetails : null
   return hostList.map(host => {
-    if (hostDetails) {
+    if (hostDetails && hostDetails[host]) {
       const hostInfo = hostDetails[host]
       return {
         host,
@@ -89,10 +89,12 @@ async function extend (options) {
     const codiusStateJson = await fse.readJson(codiusStateFilePath)
     statusIndicator.succeed()
 
+    statusIndicator.start('Getting Codius State Details')
     const manifestJson = codiusStateJson.generatedManifest
     const hostList = codiusStateJson.hostList
     const statusDetails = getHostsStatus(codiusStateJson)
     const stateOptions = getOptions(options, codiusStateJson.options)
+    statusIndicator.succeed()
 
     if (!options.assumeYes) {
       console.info('Extending Manifest:')

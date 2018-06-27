@@ -22,7 +22,7 @@ module.exports = {
   duration: 600,
   version: {
     codius: {
-      min: 3
+      min: 1
     }
   },
   lineBreak: '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -'
