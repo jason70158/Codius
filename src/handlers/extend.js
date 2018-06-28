@@ -99,7 +99,7 @@ async function extend (options) {
     if (!options.assumeYes) {
       console.info('Extending Manifest:')
       jsome(manifestJson)
-      console.info('on the folowing host(s):')
+      console.info('on the following host(s):')
       jsome(hostList)
       console.info('with the current status:')
       jsome(statusDetails)
