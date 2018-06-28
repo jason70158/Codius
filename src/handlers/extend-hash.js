@@ -1,6 +1,6 @@
 /**
  * @fileOverview
- * @name extend-manifest.js<handlers>
+ * @name extend-hash.js<handlers>
  * @author Travis Crist
  */
 
@@ -13,7 +13,7 @@ const statusIndicator = ora({ text: '', color: 'blue', spinner: 'dots1' })
 const config = require('../config.js')
 const inquirer = require('inquirer')
 const jsome = require('jsome')
-const logger = require('riverpig')('codius-cli:extend-manifest')
+const logger = require('riverpig')('codius-cli:extend-hash')
 const { checkStatus } = require('../common/utils.js')
 
 async function getExistingManifest (hostList, manifestHash) {
@@ -44,9 +44,10 @@ function getHostList ({ host, manifestHash }) {
   if (!host) {
     const potentialHost = manifestHash.split('.')
     potentialHost.shift()
-    if (potentialHost.length < 0) {
-      throw new Error(`The end of ${manifestHash} is not a valid url. Please use the format <manifesthHash.hostName> to specify the specific pod to extend or the --host parameter.`)
+    if (potentialHost.length <= 0) {
+      throw new Error(`The end of ${manifestHash} is not a valid url. Please use the format <manifesth-hash.hostName> to specify the specific pod to extend or the --host parameter.`)
     }
+    console.log(potentialHost)
     hostsArr = [`https://${potentialHost.join('.')}`]
   } else {
     hostsArr = host

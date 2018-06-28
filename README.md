@@ -207,10 +207,14 @@ The upload command is used to generate that file. When run successfully the `*.c
 | --codius-state-file          | String        | Filename or full path to the codius state file to be generated. If not set the CLI will make a default.codiusstate.json file.                                   |
 | --assume-yes, -y             | Boolean       | Say yes to all prompts.                                                                                                                                         |
 
-### extend-manifest <hash> [options]
-//TODO should this be named something else, `extend-by-hash`, `extend-pod`
-Extends a pod using the provided hash on the host
+### extend-hash <hash> [options]
+Extends a pod using the provided manifest hash on the host. Allows anyone to extend a pod if they know the manifest hash and the host.
 ex `extend-manifest hyg2qziqlhdogtbxm347spzrwkibgbzdalyj2qavqra4gzmm5jzq --host https://codius.tinypolarbear.com`
+
+Arguments:
+* `<manifest-hash>`
+  * Type: Object
+  * Description: The path to the manifest with information about your program. Format is described [here](https://github.com/codius/manifest).
 
 | Options                   | Argument Type | Description                                                                                            |
 |---------------------------|---------------|--------------------------------------------------------------------------------------------------------|
