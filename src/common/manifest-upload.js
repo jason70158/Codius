@@ -71,27 +71,26 @@ function getParsedResponses (responses, currency, status) {
 }
 
 async function fetchPromise (fetchFunction, host) {
-  return new Promise((resolve, reject) => {
-    fetchFunction.then(async (res) => {
-      if (checkStatus(res)) {
-        resolve({
-          status: res.status,
-          host,
-          response: await res.json(),
-          price: res.price
-        })
-      } else {
-        resolve({
-          host,
-          error: res.error ? res.error.toString() : 'Unknown Error Occurred',
-          text: await res.text() || '',
-          status: res.status || ''
-        })
+  try {
+    const res = await fetchFunction
+    if (checkStatus(res)) {
+      return {
+        status: res.status,
+        host,
+        response: await res.json(),
+        price: res.price
       }
-    }).catch((error) => {
-      resolve({ host, error: error.toString() || '' })
-    })
-  })
+    } else {
+      return {
+        host,
+        error: res.error ? res.error.toString() : 'Unknown Error Occurred',
+        text: await res.text() || '',
+        status: res.status || ''
+      }
+    }
+  } catch (err) {
+    return { host, error: err.toString() || '' }
+  }
 }
 
 async function fetchUploadManifest (host, duration, maxMonthlyRate, manifestJson) {

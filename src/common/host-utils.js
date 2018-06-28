@@ -36,29 +36,28 @@ function cleanHostListUrls (hosts) {
 }
 
 async function fetchHostPrice (host, duration, manifestJson) {
-  return new Promise((resolve, reject) => {
-    fetch(`${host}/pods?duration=${duration}`, {
+  try {
+    const res = await fetch(`${host}/pods?duration=${duration}`, {
       headers: {
         Accept: `application/codius-v${config.version.codius.min}+json`,
         'Content-Type': 'application/json'
       },
       method: 'OPTIONS',
       body: JSON.stringify(manifestJson)
-    }).then(async (res) => {
-      if (checkStatus(res)) {
-        resolve({ host, response: await res.json() })
-      } else {
-        resolve({
-          host,
-          error: res.error.toString() || 'Unknown Error Occurred',
-          text: await res.text() || '',
-          status: res.status || ''
-        })
-      }
-    }).catch((error) => {
-      resolve({ host, error: error.toString() })
     })
-  })
+    if (checkStatus(res)) {
+      return { host, response: await res.json() }
+    } else {
+      return {
+        host,
+        error: res.error.toString() || 'Unknown Error Occurred',
+        text: await res.text() || '',
+        status: res.status || ''
+      }
+    }
+  } catch (err) {
+    return { host, error: err.toString() }
+  }
 }
 
 function checkPrice (maxMonthlyRate, hostQuotedPrice) {

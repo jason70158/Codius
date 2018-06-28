@@ -14,24 +14,23 @@ const HOSTS_PER_DISCOVERY = 4
 const DISCOVERY_ATTEMPTS = 15
 
 async function fetchHostPeers (host) {
-  return new Promise((resolve, reject) => {
-    axios.get(`${host}/peers`, {
+  try {
+    const res = await axios.get(`${host}/peers`, {
       headers: { Accept: `application/codius-v${config.version.codius.min}+json` }
-    }).then(async (res) => {
-      if (checkStatus(res)) {
-        resolve({ host, peers: res.data.peers })
-      } else {
-        resolve({
-          host,
-          error: res.error.toString() || 'Unknown Error Occurred',
-          text: await res.text() || '',
-          status: res.status || ''
-        })
-      }
-    }).catch((error) => {
-      resolve({ host, error: error.toString() })
     })
-  })
+    if (checkStatus(res)) {
+      return { host, peers: res.data.peers }
+    } else {
+      return {
+        host,
+        error: res.error.toString() || 'Unknown Error Occurred',
+        text: await res.text() || '',
+        status: res.status || ''
+      }
+    }
+  } catch (err) {
+    return { host, error: err.toString() }
+  }
 }
 
 async function findHosts (hostSample) {

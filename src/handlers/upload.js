@@ -10,7 +10,7 @@ const { discoverHosts } = require('../common/discovery.js')
 const { uploadManifestToHosts } = require('../common/manifest-upload.js')
 const ora = require('ora')
 const { generateManifest } = require('codius-manifest')
-const statusIndicator = ora({ text: '', color: 'blue', spinner: 'dots1' })
+const statusIndicator = ora({ text: '', color: 'blue', spinner: 'point' })
 const codiusState = require('../common/codius-state.js')
 const fse = require('fs-extra')
 const inquirer = require('inquirer')
@@ -37,6 +37,14 @@ async function addHostsToManifest (status, { addHostEnv }, manifestJson, hosts) 
       container.environment.HOSTS = JSON.stringify(hosts)
     }
     status.succeed()
+  }
+}
+
+function getUploadOptions ({ maxMonthlyRate = config.price.amount, duration, units = config.price.units }) {
+  return {
+    maxMonthlyRate: maxMonthlyRate,
+    duration: duration,
+    units: units
   }
 }
 
@@ -78,8 +86,11 @@ async function upload (options) {
       console.info(config.lineBreak)
       console.info('Generated Manifest:')
       jsome(generatedManifestObj)
-      console.info('will be uploaded to hosts:')
+      console.info('will be uploaded to host(s):')
       jsome(validHostList)
+      console.info('with options:')
+      jsome(getUploadOptions(options))
+      statusIndicator.warn('All information in this manifest will be made public!')
       const userResp = await inquirer.prompt([
         {
           type: 'confirm',
