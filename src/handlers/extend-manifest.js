@@ -41,12 +41,17 @@ async function getExistingManifest (hostList, manifestHash) {
 
 function getHostList ({ host, manifestHash }) {
   let hostsArr = []
-  const potentialHost = manifestHash.split('.')
-  potentialHost.shift()
-  if (potentialHost.length < 0) {
-    throw new Error(`The end of ${manifestHash} is not a valid url. Please use the format <manifesthHash.hostName> to specify the specific pod to extend or the --host parameter.`)
+  if (!host) {
+    const potentialHost = manifestHash.split('.')
+    potentialHost.shift()
+    if (potentialHost.length < 0) {
+      throw new Error(`The end of ${manifestHash} is not a valid url. Please use the format <manifesthHash.hostName> to specify the specific pod to extend or the --host parameter.`)
+    }
+    hostsArr = [`https://${potentialHost.join('.')}`]
+  } else {
+    hostsArr = host
   }
-  hostsArr = [`https://${potentialHost.join('.')}`]
+
   return cleanHostListUrls(hostsArr)
 }
 
@@ -58,7 +63,7 @@ function getManifestHash ({ host, manifestHash }) {
 }
 
 function getOptions ({
-  maxMonthlyRate = config.price.month.xrp,
+  maxMonthlyRate = config.price.amount,
   duration = config.duration,
   units = config.price.units
 }) {

@@ -14,9 +14,7 @@ module.exports = {
     'https://codius.tinypolarbear.com'
   ],
   price: {
-    month: {
-      xrp: 10
-    },
+    amount: 10,
     units: 'XRP'
   },
   duration: 600,

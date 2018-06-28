@@ -27,7 +27,7 @@ async function getCurrencyDetails () {
 }
 
 async function unitsPerHost ({
-  maxMonthlyRate = config.price.month.xrp,
+  maxMonthlyRate = config.price.amount,
   units = config.price.units,
   duration = config.duration
 }) {

@@ -123,7 +123,7 @@ function getHostList (codiusStateJson, uploadResponses) {
 
 async function saveCodiusState (
   { codiusStateFile,
-    maxMonthlyRate = config.price.month.xrp,
+    maxMonthlyRate = config.price.amount,
     units = config.price.units,
     duration },
   manifestJson,
