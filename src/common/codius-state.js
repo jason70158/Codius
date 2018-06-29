@@ -39,7 +39,7 @@ async function validateOptions (
       logger.debug(`No codius.json and codiusvars.json file present in ${currDir}, creating examples since --assume-yes flag is present`)
       userResp.createExample = true
     } else {
-      console.info(`No codius.json and codiusvars.json files present in ${currDir}`)
+      status.warn(`No codius.json and codiusvars.json files present in ${currDir}`)
       userResp = await inquirer.prompt([
         {
           type: 'confirm',
@@ -61,7 +61,7 @@ async function validateOptions (
       logger.debug(`No codiusvars.json file present in ${currDir}, creating example since --assume-yes flag is present`)
       userResp.createExample = true
     } else {
-      console.info(`No codiusvars.json file present in ${currDir}`)
+      status.warn(`No codiusvars.json file present in ${currDir}`)
       userResp = await inquirer.prompt([
         {
           type: 'confirm',

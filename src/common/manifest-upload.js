@@ -101,7 +101,8 @@ async function fetchUploadManifest (host, duration, maxMonthlyRate, manifestJson
     },
     maxPrice: maxMonthlyRate.toString(),
     method: 'POST',
-    body: JSON.stringify(manifestJson)
+    body: JSON.stringify(manifestJson),
+    timeout: 70000 // 1m10s
   })
   return fetchPromise(fetchFunction, host)
 }
@@ -112,7 +113,8 @@ async function extendManifestByHashOnHosts (host, duration, maxMonthlyRate, mani
       Accept: `application/codius-v${config.version.codius.min}+json`
     },
     maxPrice: maxMonthlyRate.toString(),
-    method: 'PUT'
+    method: 'PUT',
+    timeout: 70000 // 1m10s
   })
   return fetchPromise(fetchFunction, host)
 }
