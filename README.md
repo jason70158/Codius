@@ -7,9 +7,6 @@
 
 The Command Line Interface for uploading and extending pods on Codius.
 
-## Overview
-The Codius CLI supports uploading & extending pods on codius hosts.
-
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
@@ -46,6 +43,9 @@ The Codius CLI supports uploading & extending pods on codius hosts.
     - [License](#license)
 
 <!-- markdown-toc end -->
+
+## Overview
+The Codius CLI supports uploading & extending pods on codius hosts.
 
 ## Upgrade Notes
 If upgrading from Codius CLI 2.0.x please note that the LevelDB dependency is removed so you will be unable to access the
@@ -340,10 +340,31 @@ extend-hash https://hyg2qziqlhdogtbxm347spzrwkibgbzdalyj2qavqra4gzmm5jzq.codius.
 ### Advanced Features
 
 #### Manually Editing `*.codiusstate.json` files
-TODO
+The `*.codiusstate.json` file consists of the following properties
+ * **description** Used for notes about the file, not used by the CLI. Can be manually modified.
+ * **manifestHash** The manifest hash of the manifest in the generatedManifest property. **DO NOT MANUALLY MODIFY**
+ * **generatedManifset** The generated manifest from the `codius upload` command. **DO NOT MANUALLY MODIFY**
+ * **options** The options used for the last `upload` or `extend` command. Can be manually modified.
+ * **hostList** The list of hosts that was used in the last `upload` or `extend` command. Can be manually modified to remove or add a host.
+   * NOTE: If you are using the **HOST environment variable** this should not be modified since you cannot modify the generatedManifest section manually
+   to add or remove a host.
+   You must use the `upload` command to regenerate the manifest with any updated HOSTS since it will change the manifest hash.
+ * **status** The current known status of the pod on the hosts it was uploaded to. It should not be manually modified
+ but if you remove a host from the hostList you may want to remove its associated status key as well. Its used to make the CLI more informative
+ when extending a pod.
+
 
 #### Codius Hosts File
-TODO
+In your manifest directory you may optionally include a `codiushosts.json` file which contains a list of hosts which should be used for upload.
+If the `--host-count` option is used the # of hosts will be randomly selected from those in this file. If that option is not specified then
+the pod will attempt to upload to all hosts in the `codiushosts.json** file.
+
+**codiushost.json**
+```javascript
+{
+  "hosts":["https://codius.example.com","https://codius.example2.com"]
+}
+```
 
 #### Migrating Existing Manifests
 TODO

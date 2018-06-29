@@ -139,13 +139,13 @@ async function checkPricesOnHosts (hosts, duration, maxMonthlyRate, manifestJson
   return hosts
 }
 
-async function getValidHosts (options, maxMonthlyRate, hostList, manifestJson) {
+async function getValidHosts (options, hostOpts) {
   let uploadHosts = []
-  if (options.host) {
-    await checkPricesOnHosts(hostList, options.duration, maxMonthlyRate, manifestJson)
-    uploadHosts = hostList
+  if (options.host || (hostOpts.codiusHostsExists && !options.hostCount)) {
+    await checkPricesOnHosts(hostOpts.hostList, options.duration, hostOpts.maxMonthlyRate, hostOpts.manifestJson)
+    uploadHosts = hostOpts.hostList
   } else {
-    uploadHosts = await gatherMatchingValidHosts(options, hostList, maxMonthlyRate, manifestJson)
+    uploadHosts = await gatherMatchingValidHosts(options, hostOpts.hostList, hostOpts.maxMonthlyRate, hostOpts.manifestJson)
   }
 
   return uploadHosts

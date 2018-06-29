@@ -86,7 +86,8 @@ const codiusVarsFile = {
 const codiusHostsFile = {
   'codius-hosts-file': {
     type: 'string',
-    description: 'Filename or full path to the codius hosts file to be used. If not set the CLI looks in the current directory for the codiushosts.json file.'
+    description: 'Filename or full path to the codius hosts file to be used. If not set the CLI looks in the current directory for the codiushosts.json file.',
+    default: 'codiushosts.json'
   }
 }
 

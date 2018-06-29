@@ -57,10 +57,10 @@ async function upload (options) {
     const generatedManifestObj = await generateManifest(options.codiusVarsFile, options.codiusFile)
 
     let hostList
+    const codiusHostsExists = await fse.pathExists(options.codiusHostsFile)
     // Skip discover if --host option is used.
     if (!options.host) {
-      const codiusHostsExists = await fse.pathExists(options.codiusHostsFile)
-      if (options.codiusHostsFile || codiusHostsExists) {
+      if (codiusHostsExists) {
         logger.debug('Codius Hosts File exists, or was provided as a parameter, using it for host list.')
         hostList = (await fse.readJson(options.codiusHostsFile)).hosts
       } else {
@@ -78,7 +78,13 @@ async function upload (options) {
     const currencyDetails = await getCurrencyDetails()
 
     statusIndicator.start(`Checking Host Monthly Rate vs Max Monthly Rate ${maxMonthlyRate.toString()} ${currencyDetails}`)
-    const validHostList = await getValidHosts(options, maxMonthlyRate, cleanHostList, generatedManifestObj)
+    const validHostOptions = {
+      maxMonthlyRate,
+      hostList: cleanHostList,
+      manifestJson: generatedManifestObj,
+      codiusHostsExists
+    }
+    const validHostList = await getValidHosts(options, validHostOptions)
     statusIndicator.succeed()
     addHostsToManifest(statusIndicator, options, generatedManifestObj, validHostList)
 
