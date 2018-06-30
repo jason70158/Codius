@@ -367,6 +367,13 @@ the pod will attempt to upload to all hosts in the `codiushosts.json** file.
 ```
 
 #### Migrating Existing Manifests
+Exising manifest should be migrated to the new format by splitting the main manifest and the private and public variables
+into the `codius.json` and `codiusvars.json` files. Unfortunately this means that the generated manifest will change slightly
+and so will your manifest hash. If that is not tenable see the section [Manually Creating a `*.codisustate.json` file](#manually-creating-a-codisustatejson-file).
+
+To migrate the existing manifest to the new format first look at your existing manifests `manifest` object.
+Copy it into a new file `codius.json`and remove the `vars` object from the manifest object.
+
 TODO
 
 #### Manually Creating a `*.codisustate.json` file

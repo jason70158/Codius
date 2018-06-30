@@ -101,7 +101,7 @@ async function validateOptions (
     throw new Error(errorMessage)
   }
 
-  if (!hosts && codiusHostsFile && !codiusHostsExists) {
+  if (!hosts && codiusHostsFile !== 'codiushosts.json' && !codiusHostsExists) {
     let errorMessage
     if (codiusHostsFile === 'codiushosts.json') {
       errorMessage = `Codius Hosts File\n ${currDir}/${codiusHostsFile}\n does not exists please check the location of your ${codiusHostsFile}.`
