@@ -12,6 +12,7 @@ const sampleSize = require('lodash.samplesize')
 const { getCurrencyDetails } = require('../common/price.js')
 const { URL } = require('url')
 const { checkStatus } = require('../common/utils.js')
+const BATCH_SIZE = 7
 
 function cleanHostListUrls (hosts) {
   let hostList
@@ -43,7 +44,8 @@ async function fetchHostPrice (host, duration, manifestJson) {
         'Content-Type': 'application/json'
       },
       method: 'OPTIONS',
-      body: JSON.stringify(manifestJson)
+      body: JSON.stringify(manifestJson),
+      timeout: 20000 // 20s
     })
     if (checkStatus(res)) {
       return { host, response: await res.json() }
@@ -100,7 +102,7 @@ async function gatherMatchingValidHosts ({ duration, hostCount = 1 }, hostList, 
 
   while (validHosts.length < hostCount && attemptCount < maxAttempts) {
     logger.debug(`Valid Hosts Found: ${validHosts.length}, attemptCount: ${attemptCount} need: ${hostCount} host(s)`)
-    const candidateHosts = sampleSize(hostList, hostCount < 5 ? hostCount : 5).filter((host) => !invalidHosts.includes(host))
+    const candidateHosts = sampleSize(hostList, hostCount < BATCH_SIZE ? hostCount : BATCH_SIZE).filter((host) => !invalidHosts.includes(host))
     logger.debug(`Candidate Hosts: ${candidateHosts}`)
     logger.debug(`InvalidHosts: ${invalidHosts}`)
     attemptCount += candidateHosts.length

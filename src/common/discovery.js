@@ -16,7 +16,8 @@ const DISCOVERY_ATTEMPTS = 15
 async function fetchHostPeers (host) {
   try {
     const res = await axios.get(`${host}/peers`, {
-      headers: { Accept: `application/codius-v${config.version.codius.min}+json` }
+      headers: { Accept: `application/codius-v${config.version.codius.min}+json` },
+      timeout: 30000
     })
     if (checkStatus(res)) {
       return { host, peers: res.data.peers }
@@ -55,16 +56,16 @@ async function discoverHosts (targetCount) {
   for (let i = 0; i < DISCOVERY_ATTEMPTS; i++) {
     const hostSample = sampleSize(hostList, HOSTS_PER_DISCOVERY).filter((host) => !badHosts.includes(host))
     const results = await findHosts(hostSample)
-    logger.debug(`Host Discovery Attempt# ${i + 1} ${JSON.stringify(results)}`)
+    logger.debug(`Host Discovery Attempt# ${i + 1}, Failed: ${JSON.stringify(results.failed)}`)
     hostList = [...new Set([...hostList, ...results.success])]
     badHosts = [...new Set([...badHosts, ...results.failed])]
     if (hostCount === hostList.length || (targetCount && hostList.length >= targetCount)) {
-      logger.debug(`Host Discovery Complete, found ${hostList.length} hosts, list: ${JSON.stringify(hostList)}`)
+      logger.debug(`Host Discovery Complete, found ${hostList.length} hosts}`)
       return hostList
     }
     hostCount = hostList.length
   }
-  logger.debug(`Host Discovery Complete, found ${hostList.length} hosts, list: ${JSON.stringify(hostList)}`)
+  logger.debug(`Host Discovery Complete, found ${hostList.length} hosts}`)
   return hostList
 }
 

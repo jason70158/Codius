@@ -17,6 +17,7 @@ const inquirer = require('inquirer')
 const config = require('../config.js')
 const jsome = require('jsome')
 const logger = require('riverpig')('codius-cli:uploadhandler')
+const chalk = require('chalk')
 
 function checkOptions ({ addHostEnv }) {
   // If the host number is set but the add host env is not specified warn the user
@@ -96,7 +97,7 @@ async function upload (options) {
       jsome(validHostList)
       console.info('with options:')
       jsome(getUploadOptions(options))
-      statusIndicator.warn('All information in this manifest will be made public!')
+      statusIndicator.warn(`All information in the ${chalk.red('manifest')} property will be made ${chalk.red('public')}!`)
       const userResp = await inquirer.prompt([
         {
           type: 'confirm',

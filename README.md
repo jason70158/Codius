@@ -48,10 +48,9 @@ The Command Line Interface for uploading and extending pods on Codius.
 The Codius CLI supports uploading & extending pods on codius hosts.
 
 ## Upgrade Notes
-If upgrading from Codius CLI 2.0.x please note that the LevelDB dependency is removed so you will be unable to access the
-list of currently uploaded **pods** and **stored manifests**.
+If upgrading from Codius CLI 2.0.x please note that the LevelDB dependency is removed the list of currently uploaded **pods** and **stored manifests** will be inaccessible.
 It's recommended that you save your list of pods and export any manifests that you do not have access to
-befor upgrading.
+before upgrading.
 
 ### Listing all uploaded pods
 Use the command
@@ -68,7 +67,7 @@ For each manifest you wish to keep using that you do not have stored locally exp
 ```
 codius pods -m [manifestHash]
 ```
-For example the following will export the pod with the manifes hash `s5e3eqgzy4eqvsejphru6y62uw325nj7tvqr7a2pqxohtkcd6wj` to the file `s5e3eqgz-manifest-backup.json`
+For example the following will export the pod with the manifest hash `s5e3eqgzy4eqvsejphru6y62uw325nj7tvqr7a2pqxohtkcd6wj` to the file `s5e3eqgz-manifest-backup.json`
 
 ```
 codius pods -m s5e3eqgzy4eqvsejphru6y62uw325nj7tvqr7a2pqxohtkcd6wjq > s5e3eqgz-manifest-backup.json
@@ -81,7 +80,7 @@ a Codius State File from your existing manifests.
 ## Prerequisites
 
 * NodeJS
-* An XRP Wallet (you will need at least 20 XRP to open a new one)
+* An XRP Wallet (you will need at least 20 XRP to open a new onee)
 * [Moneyd](https://github.com/interledgerjs/moneyd)
 
 ## Installation
@@ -96,15 +95,15 @@ All `codius` commands have a `--help` parameter describing their usage, e.g. `co
 
 ### `upload [options]`
 Looks in the current directory for the files `codius.json` & `codiusvars.json` which are used to generate a manifest
-which is then used to upload the pod to host(s). By default it uploads the pod to a single random known host with a
+that is used to upload the pod to host(s). By default it uploads the pod to a single random known host with a
 duration of 10 minutes. Its recommended that you start with a short duration and then extend it to ensure your
 manifest is running appropriately. Upload should only be used for new manifest where a `default.codiusstate.json` file does not exist.
 
 | Options                      | Argument Type | Description                                                                                                                                                     |
 |------------------------------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | --duration, -d               | Integer       | Duration (in seconds) the pod will be run on all Codius hosts, defaults to 10 mins.                                                                             |
-| --max-monthly-rate, -m       | Integer       | Max rate per month the uploader is willing to pay a Codius host to run the pod, requires --units flag to be set. Defaults to 10 XRP.                            |
-| --units, -u                  | Integer       | The unit of currency to pay the Codius hosts with, e.g. 'XRP'. Defaults to 'XRP'.                                                                               |
+| --max-monthly-rate, -m       | Integer       | Max rate per month the uploader is willing to pay a Codius host to run the pod, requires --units flag to be set. Defaults to 10.                                |
+| --units, -u                  | Integer       | The unit of currency to pay the Codius hosts with, e.g. 'XRP', requires --max-monthly-rate flat to be set. Defaults to 'XRP'.                                                                                |
 | --host-count, -c             | Integer       | The number of hosts to upload the pod to. They are discovered from known hosts and selected randomly. Defaults to 1. This and `--host` are mutually exclusive.  |
 | --host                       | String        | The public URI of a host to upload the manifest to. Can be repeated any number of times for multiple hosts. This and `--host-count, -c` are mutually exclusive. |
 | --add-host-env, --a          | Boolean       | Adds a $HOST env in the manifest before upload which contains all the hosts the manifest will be uploaded to.                                                   |
@@ -123,13 +122,13 @@ The upload command is used to generate that file. When run successfully the `*.c
 | Options                   | Argument Type | Description                                                                                            |
 |---------------------------|---------------|--------------------------------------------------------------------------------------------------------|
 | --duration, -d               | Integer       | Duration (in seconds) the pod will be run on all Codius hosts, defaults to 10 mins.                                                                             |
-| --max-monthly-rate, -m       | Integer       | Max rate per month the uploader is willing to pay a Codius host to run the pod, requires --units flag to be set. Defaults to 10 XRP.                            |
-| --units, -u                  | Integer       | The unit of currency to pay the Codius hosts with, e.g. 'XRP'. Defaults to 'XRP'.                                                                               |
+| --max-monthly-rate, -m       | Integer       | Max rate per month the uploader is willing to pay a Codius host to run the pod, requires --units flag to be set. Defaults to 10.                                |
+| --units, -u                  | Integer       | The unit of currency to pay the Codius hosts with, e.g. 'XRP', requires --max-monthly-rate flat to be set. Defaults to 'XRP'.                                                                                |
 | --codius-state-file          | String        | Filename or full path to the codius state file to be generated. If not set the CLI will make a default.codiusstate.json file.                                   |
 | --assume-yes, -y             | Boolean       | Say yes to all prompts.                                                                                                                                         |
 
 ### `extend-hash <hash> [options]`
-Extends a pod using the provided manifest hash on the host. Allows anyone to extend a pod if they know the manifest hash and the host.
+Extends a pod using the provided manifest hash on the host. Allows the user to extend a pod if they know the manifest hash and the host.
 
 Arguments:
 * `<manifest-hash>`
@@ -139,8 +138,8 @@ Arguments:
 | Options                   | Argument Type | Description                                                                                            |
 |---------------------------|---------------|--------------------------------------------------------------------------------------------------------|
 | --duration, -d               | Integer       | Duration (in seconds) the pod will be run on all Codius hosts, defaults to 10 mins.                                                                             |
-| --max-monthly-rate, -m       | Integer       | Max rate per month the uploader is willing to pay a Codius host to run the pod, requires --units flag to be set. Defaults to 10 XRP.                            |
-| --units, -u                  | Integer       | The unit of currency to pay the Codius hosts with, e.g. 'XRP'. Defaults to 'XRP'.                                                                               |
+| --max-monthly-rate, -m       | Integer       | Max rate per month the uploader is willing to pay a Codius host to run the pod, requires --units flag to be set. Defaults to 10.                                |
+| --units, -u                  | Integer       | The unit of currency to pay the Codius hosts with, e.g. 'XRP', requires --max-monthly-rate flat to be set. Defaults to 'XRP'.                                   |
 | --codius-state-file          | String        | Filename or full path to the codius state file to be generated. If not set the CLI will make a default.codiusstate.json file.                                   |
 | --assume-yes, -y             | Boolean       | Say yes to all prompts.                                                                                                                                         |
 
@@ -373,6 +372,12 @@ and so will your manifest hash. If that is not tenable see the section [Manually
 
 To migrate the existing manifest to the new format first look at your existing manifests `manifest` object.
 Copy it into a new file `codius.json`and remove the `vars` object from the manifest object.
+
+Make a new `codiusvars.json` file which looks like the example in the [Example Files:](#example-files) section with the private
+and public variables that were in your original manifest.
+
+Once that is complete you are ready to run upload which will combine the 2 files and generate a manifest for you with the private variables
+hashed
 
 TODO
 
