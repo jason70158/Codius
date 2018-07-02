@@ -28,7 +28,7 @@ const maxMonthlyRate = {
   'max-monthly-rate': {
     alias: 'm',
     type: 'number',
-    description: 'Max rate per month the uploader is willing to pay a Codius host to run the pod, requires --units flag to be set. Defaults to 10 XRP.'
+    description: 'Max rate per month the uploader is willing to pay a Codius host to run the pod, requires --units flag to be set. Defaults to 10.'
     // NOTE: The default is not set using yargs so that when this param is set yargs requires the units param.
   }
 }
@@ -37,7 +37,7 @@ const units = {
   'units': {
     alias: 'u',
     type: 'string',
-    description: 'The unit of currency to pay the Codius hosts with, e.g. \'XRP\'. Defaults to \'XRP\'.'
+    description: 'The unit of currency to pay the Codius hosts with, e.g. \'XRP\', requires --max-monthly-rate flag to be set. Defaults to \'XRP\'.'
     // NOTE: The default is not set using yargs so that when this param is set yargs requires the max-monthly-rate param.
   }
 }

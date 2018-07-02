@@ -97,7 +97,6 @@ async function gatherMatchingValidHosts ({ duration, hostCount = 1 }, hostList, 
   let validHosts = []
   const maxAttempts = hostList.length
   let attemptCount = 0
-  let lastFailed = []
   let invalidHosts = []
 
   while (validHosts.length < hostCount && attemptCount < maxAttempts) {
@@ -109,20 +108,17 @@ async function gatherMatchingValidHosts ({ duration, hostCount = 1 }, hostList, 
     const fetchPromises = candidateHosts.map((host) => fetchHostPrice(host, duration, manifestJson))
     const priceCheckResults = await checkHostsPrices(fetchPromises, maxMonthlyRate)
     if (priceCheckResults.success.length > 0) {
-      validHosts = [...validHosts, ...priceCheckResults.success.map((obj) => obj.host)]
-    } else {
-      lastFailed = priceCheckResults.failed
+      validHosts = [...new Set([...validHosts, ...priceCheckResults.success.map((obj) => obj.host)])]
     }
 
     if (priceCheckResults.failed.length > 0) {
-      invalidHosts = [...invalidHosts, ...priceCheckResults.failed.map((obj) => obj.host)]
+      invalidHosts = [...new Set([...invalidHosts, ...priceCheckResults.failed.map((obj) => obj.host)])]
     }
   }
-
   if (validHosts.length < hostCount) {
     const error = {
       message: `Unable to find ${hostCount} hosts with provided max price.`,
-      errors: lastFailed
+      invalidHosts: invalidHosts
     }
     throw new Error(JSON.stringify(error))
   }
